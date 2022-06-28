@@ -46,7 +46,7 @@ const createBlog = async function (req, res) {
     
 module.exports.createBlog = createBlog;
 
-// written by aditya
+
 const updateBlogsById = async function (req, res) {
   try {
     let blogId = req.params.blogId;
@@ -54,7 +54,7 @@ const updateBlogsById = async function (req, res) {
 
     // if(!blogId)
     // body can not be empty
-    if (Object.keys(data).length == 0)
+    if (Object.keys(data).length ==0 )
       return res.status(400).send({
         status: false,
         msg: "Body is required",
@@ -102,7 +102,7 @@ const updateBlogsById = async function (req, res) {
 
 module.exports.updateBlogsById = updateBlogsById;
 
-//written by aditya
+
 let getBlogs = async function (req, res) {
   try {
     let category = req.query.category;
@@ -147,7 +147,7 @@ let getBlogs = async function (req, res) {
   }
 };
 module.exports.getBlogs = getBlogs;
-//written by samir
+
 
 let isdeleted = async function (req, res) {
   try {

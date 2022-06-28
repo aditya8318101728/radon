@@ -3,7 +3,7 @@ let validator = require("validator");
 let evalidator = require("email-validator");
 let jwt = require("jsonwebtoken");
 
-//written by samir
+
 const createAuthor = async function (req, res) {
   try {
     let data = req.body;

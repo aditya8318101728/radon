@@ -21,7 +21,6 @@ let Authentication = async function (req, res, next) {
 module.exports.Authentication = Authentication;
 
 
-
 let Authorization = async function (req, res, next) {
   try {
     let logedInUserKey = req.headers["x-api-key"] || req.headers["X-Api-Key"];
@@ -34,7 +33,7 @@ let Authorization = async function (req, res, next) {
  
     requestBlogId = req.params.blogId.toString();
     if (requestBlogId.length < 24)
-      return res.status(400).send({ msg: "enter valit blogid" });
+      return res.status(400).send({ msg: "enter vadit blogid" });
 
     findAuthorID = await blogModel.findOne({ _id: requestBlogId });
     if (!findAuthorID) return res.status(404).send({ err: "id not found " });
@@ -78,7 +77,7 @@ let AuthorizationToQuary= async function (req, res, next) {
     if (!findAuthorID) return res.status(404).send({ err: "Author id  not found " });
 
     let authorID = findAuthorID._id.toString();
-
+ 
     if (logedinUserID != authorID)
       return res.status(401).send({ msg: "logedin user is not authorized To create blog " });
 

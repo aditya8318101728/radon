@@ -16,9 +16,8 @@ const college = async function (req, res) {
         .send({ status: false, msg: "Body should  be not Empty.. " });
     }
 
-    
-
    //<-------These validations for Mandatory fields--------->//
+
      if(!valid.isValid(name)){ 
         return res
            .status(400)

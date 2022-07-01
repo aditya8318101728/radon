@@ -32,7 +32,7 @@ const intern = async function (req, res) {
 
     let college = await collegeModel.findOne({ name: collegeName })
 
-    if (!college) return res.status(400).send({ status: false, msg: "No such college found." })
+    if (!college) return res.status(404).send({ status: false, msg: "No such college found." })
     internData.collegeId = college["_id"]
 
 
@@ -40,43 +40,44 @@ const intern = async function (req, res) {
    //<-------These validations for Mandatory fields--------->//
     if (!valid.isValid(name)) {
       return res
-        .status(400)
-        .send({ status: false, msg: "Name field is mandatory" });
+      .status(400)
+      .send({ status: false, msg: "Name field is mandatory" });
     }
     if (!valid.isValid(email)) {
       return res
-        .status(400)
-        .send({ status: false, msg: "Email field is mandatory" });
+      .status(400)
+      .send({ status: false, msg: "Email field is mandatory" });
     }
     if (!valid.isValid(mobile)) {
       return res
-        .status(400)
-        .send({ status: false, msg: "Mobile field is mandatory" });
+      .status(400)
+      .send({ status: false, msg: "Mobile field is mandatory" });
     }
-
- 
+    
+    
     if (!valid.reg(name))
-      return res
-        .status(400)
-        .send({ status: false, msg: "Please Use Alphabets in name" });
-
-
-    let reg = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/.test(mobile);
-
+    return res
+    .status(400)
+    .send({ status: false, msg: "Please Use Alphabets in name" });
+    
+    
+    let reg = /^[6-9]\d{9}$/.test(mobile);
+    
     if (!reg) {
       return res
-        .status(400)
-        .send({ status: false, msg: "invalid phone number" });
+      .status(400)
+      .send({ status: false, msg: "invalid phone number" });
     }
-
-
+    
+    internData.mobile = mobile.toString()
+    
     //<--------Checking Duplicate Email and Mobile--------->//
 
     let duplicateEmail = await internModel.findOne({ email: email });
     if (duplicateEmail) {
       return res
-        .status(400)
-        .send({ status: false, msg: "Email Already Exist." });
+      .status(400)
+      .send({ status: false, msg: "Email Already Exist." });
     }
 
     let duplicatePhone = await internModel.findOne({ mobile: mobile });
@@ -88,7 +89,9 @@ const intern = async function (req, res) {
 
 
    //<---------Checking Email Validation---------->//
-    let validate = evalidator.isEmail(email);
+
+
+    let validate = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
     if (!validate) {
       return res
         .status(400)
@@ -97,7 +100,8 @@ const intern = async function (req, res) {
           msg: "You have entered an invalid email address!",
         });
     }
-
+    
+     
     let result = await internModel.create(internData);
     res.status(201).send({ status: true, Data: result });
   } catch (err) {

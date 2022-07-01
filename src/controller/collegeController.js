@@ -60,6 +60,11 @@ const college = async function (req, res) {
         .status(400)
         .send({ status: false, msg: "Please Use only Alphabets in full name" });
 
+     let reg=  /^(ftp|http|https):\/\/[^ "]+$/
+     if(!reg.test(logoLink)) return res.status(400).send({status:false, message:"Please provide a valid url."})
+
+     let regex = /^https?:\/\/.*\/.*\.(png|gif|webp|jpeg|jpg)\??.*$/gmi
+     if(!regex.test(logoLink)) return res.status(400).send({status : false, msg : "Please Provide valid extension." })
 
     let result = await collegeModel.create(collegeData);
     res.status(201).send({ status: true, Data: result });
@@ -75,11 +80,15 @@ const getColleges = async function (req, res) {
     if (Object.keys(req.query).length == 0) {
       return res
       .status(400)
-      .send({ status: false, msg: "Enter college Name." });
+      .send({ status: false, msg: "CollegeName is Mandatory." });
     }
+     
+    if(!college) return res.status(400).send({status :false , msg : "Enter College Name."})
+    if (!valid.reg(college)) return res.status(400).send({status: false, msg: "Use Alphabets only."})
 
     college = college.toLowerCase()
 
+ 
     
     let result = await collegeModel
       .findOne({ name: college })

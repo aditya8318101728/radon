@@ -1,5 +1,4 @@
 const bookModel = require("../models/bookModel")
-const reviewModel = require("../models/reviewModel")
 const userModel = require("../models/userModel")
 let validator = require("validator");
 const valid = require("../validator/validator")
@@ -80,8 +79,8 @@ return res.status(400).send({ status: false, msg: "Please use only alphabets in 
    res.status(201).send({msg:savedData});
    }catch (err) {
    res.status(500).send({ status: false, msg: err.message });
-  }
-  };
+   }
+}
 
 
 
@@ -118,14 +117,16 @@ return res.status(400).send({ status: false, msg: "Please use only alphabets in 
         },
             "Group-4", {expiresIn :"12h"} 
             )
-    res.status(201).setHeader("x-api-key",token)
-
-    res.status(200).send({status:true,data:token })
+    res.status(200).setHeader("x-api-key",token)
+    res.status(200).send({status:true, data:token })
 
 }catch(error){
-    res.status(500).send({status:false,message:error})
+    res.status(500).send({status : false, message:error})
 }
 }
+  
+
+
 
 
 
@@ -133,3 +134,7 @@ return res.status(400).send({ status: false, msg: "Please use only alphabets in 
   module.exports.createUser = createUser
   module.exports.userLogin = userLogin
   
+
+
+  
+

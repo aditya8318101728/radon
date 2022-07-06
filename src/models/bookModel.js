@@ -31,18 +31,17 @@ const bookSchema = new mongoose.Schema({
     },
 
     subcategory: {
-        type: String,
+        type: [String],
         require: true
     },
 
-    review: {
-        type: String,
-        default: 0,
-        comment: String
+    reviews: {
+        type: Number,
+        default: 0
     },
 
     deletedAt: {
-        type: date
+        type: Date
     },
 
     isDeleted: {
@@ -51,13 +50,13 @@ const bookSchema = new mongoose.Schema({
     },
 
     releasedAt: {
-        type: date,
+        type:Date,
         require: true,
     }
 
 }, { timestamp: true })
 
-module.exports = mongoose.model("bookModel", bookSchema)
+module.exports = mongoose.model("Book", bookSchema)
 
 
 

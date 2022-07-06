@@ -15,7 +15,7 @@ const bookSchema = new mongoose.Schema({
 
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: User,
+        ref: "User",
         require: true
     },
 
@@ -31,7 +31,7 @@ const bookSchema = new mongoose.Schema({
     },
 
     subcategory: {
-        type: String,
+        type: [String],
         require: true
     },
 
@@ -42,7 +42,7 @@ const bookSchema = new mongoose.Schema({
     },
 
     deletedAt: {
-        type: date
+        type: Date
     },
 
     isDeleted: {

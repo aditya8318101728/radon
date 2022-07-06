@@ -30,7 +30,7 @@ const reviewSchema = new mongoose.Schema(
 
         },
         isDeleted: {
-            type:  Boolean,
+            type: Boolean,
             default: false
         },
     },

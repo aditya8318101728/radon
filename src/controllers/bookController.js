@@ -67,31 +67,55 @@ const createBook = async function (req, res){
 const getBooks = async function (req, res){
     try{
      let data = req.query
-     if(Object.keys(data).length == 0) return res.status(400).send({stastus : false, msg : "Provide inputs in query!"})
 
-     let {userId, category, subCategory} = data
+     let userId = req.query.userId
+    //  let isValid = mongoose.Types.ObjectId.isValid(userId)
+    //     if(!isValid)  return res.status(400).send({status : false, msg : "Invalid userId!"})
 
-     if(!userId) return res.status(400).send({stastus : false, msg : "Provide a userId!"})
-     let idExists = await userModel.findOne({_id : userId})
-     if(!idExists) return res.status(404).send({status : false, msg : "UserId not found!"})
+     let category = req.query.category
+     let subCategory = req.query.subCategory
 
-     let isValid = mongoose.Types.ObjectId.isValid(data.userId)
-        if (!isValid) return res.status(400).send({ status: false, msg: "Enter valid objectID" })
+     if(!data){
+     let books = await bookModel.find({isDeleted:false}).select({_id:1, title:1, excerpt:1, userId:1, category:1, releasedAt:1, reviews:1}).sort("title")
+     if(!books) return res.status(404).send({status:false, msg: "No books found!"})
+     res.status(200).send({status : true, msg : "Books found!", books})
+     }
 
-        if(!category) return res.status(400).send({stastus : false, msg : "Provide a category!"})
+     if(userId){
+        let book1 = await userModel.findById(userId)
+        if(!book1) return res.status(404).send({status : false, msg : "No books found with this userId"})
+        //res.status(200).send({status : true, msg : "Books found!", book1})
+     }
 
-        if(!subCategory) return res.status(400).send({stastus : false, msg : "Provide a subCategory!"})
+     if(category){
+        let book2 = await bookModel.find({category : category})
+        if(!book2) return res.status(404).send({status : false, msg : "Books not found by this category!"})
+     }
 
-     let getBooks = await bookModel.find({isDeleted : false, data}).select({_id : 1, title : 1, excerpt : 1, userId : 1, category : 1, releasedAt : 1, reviews : 1})
-     let final = getBooks.title.sort()
+     if(subCategory){
+        let book3 = await bookModel.find({subCategory : subCategory})
+        if(!book3) return res.status(404).send({status : false, msg : "Books not found by this subCategory!"})
+     }
 
-                                            
-     res.status(200).send({status : true, msg : "Books found!", final})
+     let books = await bookModel.find({data, isDeleted:false}).select({_id:1, title:1, excerpt:1, userId:1, category:1, releasedAt:1, reviews:1}).sort("title")
+
+    if(!books) return res.status(404).send({status : false, msg : "Books not found!"})
+
+    res.status(200).send({status : true, msg : "Books found!", books})
 
     }catch(error){
         res.status(500).send({msg : error.message})
     }
 }
+
+
+
+
+
+
+
+
+const delete
 
 module.exports.createBook = createBook
 module.exports.getBooks = getBooks

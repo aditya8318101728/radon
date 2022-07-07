@@ -3,6 +3,7 @@
     "body-parser": "^1.20.0",
     "evalidator": "^0.3.6",
     "express": "^4.18.1",
+    "isbn-validate": "^1.0.3",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.3",
     "mongoose": "^6.4.3",

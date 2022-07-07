@@ -1,19 +1,15 @@
 const JWT= require("jsonwebtoken")
-const midllauth= async function(req,res,nex){
+const midllauth= async function(req,res,next){
     try{
-    const token= req.header["x-api-key"]
-    let data=req.body
-    let user=data.userid
+    const token= req.headers["x-api-key"]
+    
     if(!token){
-        res.status(400).send({status:false,message:"please enter token"})
+        res.status(400).send({status:false,msg:"please enter token"})
     }
-    let decodedtoken=JWT.verify(token,"Group-4")
-    let userid= decodedtoken.userid
-    if(userid!=user){
-        return res.status(401).send({status:false,message:"login user is different modified user"})
-     }
+    let decodedtoken = JWT.verify(token,"Group-4") //authentication
+    
      if(!decodedtoken){
-        res.status(400).send({status:false,message:"invalid token"})
+        res.status(400).send({status:false, msg:"invalid token"})
      }
      next()
     }

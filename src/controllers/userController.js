@@ -4,17 +4,27 @@ const userModel = require("../models/userModel")
 let validator = require("validator");
 const valid = require("../validator/validator")
 const jwt = require("jsonwebtoken")
+const passValidator = require('password-validator');
 
 
 const createUser = async function ( req,res ) {
   try{
    let data = req.body
-   let {title,name,phone,email,password} =req.body      //DESTRUCTURE
+   let {title,name,phone,email,password,} = data      //DESTRUCTURE
+
+   let address = req.body.address
+   if(!address) return res.status(400).send({status:false,msg:"Address is mandatory!"})
+   let city = address.city
+   if(!city) return res.status(400).send({status:false,msg:"City is mandatory!"})
+   let street = address.street
+   if(!street) return res.status(400).send({status:false,msg:"Street is mandatory!"})
+   let pincode = address.pincode
+   if(!pincode) return res.status(400).send({status:false,msg:"Pincode is mandatory!"})
 
 //////////////////////////////BODY SHOULD NOT BE EMPTY////////////////////////////////////////////////
 
    if(Object.keys(data).length==0){
-   return res.status(400).send({status : false, msg : "Body should not be empty"})
+   return res.status(400).send({status : false, msg : "Body should not be empty!"})
    }
    
 /////////////////////////////////////////ENUM WORDS ///////////////////////////////////////////
@@ -40,6 +50,15 @@ if(!email){
 }
 if(!password){
     return res.status(400).send({status:false,msg:"Please provide a password!"})
+}
+const schema = new passValidator();
+schema.is().min(8)
+if (!schema.validate(password)) {
+    return res.status(400).send({ status: false, msg: "Minimum length of password should be 8 characters" })
+}
+schema.is().max(15)
+if (!schema.validate(password)) {
+    return res.status(400).send({ status: false, msg: "Max length of password should be 15 characters" })
 }
 
 //////////////////////////////////////CONDITION FOR BLANK VALUE//////////////////////////////////////
@@ -99,7 +118,7 @@ return res.status(400).send({ status: false, msg: "Please use only alphabets in 
     if(!email){
       return res.status(400).send({status:false,message:"Please enter an email!"})
     }
-    const user= await userModel.findOne({email:email})
+    const user = await userModel.findOne({email:email})
     if(!user){
         return res.status(404).send({status:false,message:"User does not exists!"})
     }
@@ -112,13 +131,13 @@ return res.status(400).send({ status: false, msg: "Please use only alphabets in 
    
     const token = jwt.sign( 
         {
-            userid:user._id.toString(),
-            batch:"radon",
-            organisation:"Function-Up"
+            userId : user._id.toString(),
+            batch : "radon",
+            organisation : "Function-Up"
         },
             "Group-4", {expiresIn :"12h"} 
             )
-    res.status(200).setHeader("x-api-key",token)
+    //res.status(200).setHeader("x-api-key",token)
     res.status(200).send({status:true, data:token })
 
 }catch(error){

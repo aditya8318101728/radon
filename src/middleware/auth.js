@@ -7,7 +7,7 @@ const authenticate= async function(req,res,next){
     const token= req.headers["x-api-key"]
     
     if(!token){
-        res.status(400).send({status:false,msg:"please enter token"})
+        res.status(400).send({status:false,msg:"Please enter token"})
     }
     let decodedtoken = JWT.verify(token,"Group-4") //authentication
     
@@ -36,10 +36,17 @@ const authorize= async function(req,res,next){
         let decodedToken = JWT.verify(token, "Group-4")
         if(!decodedToken) return res.status(401).send({status : false, msg : "Invalid token!"})
 
-        let userId = await bookModel.findById(bookId).select({userId : 1})
-        if(!userId) return res.status(404).send({status : false, msg : "No book found with this bookId"})
+        let userLoggedIn = decodedToken.userId
+       // console.log(userLoggedIn)
 
-        if(decodedToken !== userId) return res.status(401).send({status : false, msg : "You're not authorized!"})
+        let findUserId = await bookModel.findById(bookId)
+        if(!findUserId) return res.status(404).send({status : false, msg : "No book found with this bookId"})
+
+        let newUserId = findUserId.userId.toString()
+        //console.log(newUserId)
+
+
+        if(userLoggedIn !== newUserId) return res.status(401).send({status : false, msg : "You're not authorized!"})
 
         next()
 

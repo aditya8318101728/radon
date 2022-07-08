@@ -14,13 +14,13 @@ router.post("/books", MW.authenticate, bookController.createBook)
 
 router.post("/login",  userController.userLogin)
 
-router.get("/books", bookController.getBooks)
+router.get("/books", MW.authenticate, bookController.getBooks)
 
-router.get("/books/:bookId", bookController.getBooksById)
+router.get("/books/:bookId",  bookController.getBooksById)
 
-router.put("/books/:bookId", bookController.updateBooks)
+router.put("/books/:bookId", MW.authorize, bookController.updateBooks)
 
-router.delete("/books/:bookId", bookController.deleteBooks)
+router.delete("/books/:bookId", MW.authorize, bookController.deleteBooks)
 
 
 
@@ -32,7 +32,7 @@ router.delete("/books/:bookId", bookController.deleteBooks)
 router.all("/**", function (req, res) {
     res.status(404).send({
         status: false,
-        msg: "The api you requested is not available"
+        msg: "The api you requested is not available!"
     })
 })
 

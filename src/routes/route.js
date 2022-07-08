@@ -16,6 +16,10 @@ router.post("/login",  userController.userLogin)
 router.get("/books", bookController.getBooks)
 router.get("/books/:bookId", bookController.getBooksById)
 
+router.get("/books/:bookId", bookController.getBooksById)
+
+router.delete("/books/:bookId", bookController.deleteBooks)
+
 
 
 

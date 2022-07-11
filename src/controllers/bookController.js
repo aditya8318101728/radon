@@ -13,11 +13,15 @@ const createBook = async function (req, res){
         let {title, excerpt,userId,ISBN,category,subcategory,releasedAt} = data
         
         if(!title)return res.status(400).send({status : false, msg : "Please insert title!"})
+        data.title = data.title.trim().split(" ").filter(word => word).join(" ")
+
         let uniqueTitle = await bookModel.findOne({title : title})
         if(uniqueTitle) return res.status(409).send({status : false, msg : "Title already exists!"})
+        
 
     
         if(!excerpt) return res.status(400).send({status : false, msg : "Excerpt should be present!"})
+        data.excerpt = data.excerpt.trim().split(" ").filter(word =>word).join(" ")
 
         
         if(!userId) return res.status(400).send({status : false, msg : "UserId should be present!"})
@@ -121,17 +125,15 @@ const getBooksById = async function (req, res) {
       if (!isValidbookID) return res.status(400).send({ status: false, message: "BookId is not valid" });
       
   
-      const book = await bookModel.find({_id: bookId, isDeleted: false,}).select({ __v: 0, ISBN: 0 }); 
+      const book = await bookModel.findOne({_id: bookId, isDeleted: false,}).select({ __v: 0, ISBN: 0 }).lean(); 
       if (!book) return res.status(404).send({ status: false, message: "BookId does not exist!" });
     
     const reviews = await  reviewModel.find({_id:bookId})
-         let obj = {
-          book
-         }
-            obj.reviewsData = reviews
+         
+            book.reviewsData = reviews
      
     
-   return res.status(200).send({ status: true, message: "Successfully fetched books!", data: obj });
+   return res.status(200).send({ status: true, message: "Successfully fetched books!", data: book });
 
     } catch (err) {
       return res.status(500).send({ status: false, message: err.message });

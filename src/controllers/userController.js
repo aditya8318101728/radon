@@ -32,6 +32,7 @@ if(!title){
     return res.status(400).send({status:false,msg:"Title is mandatory!"})
 }
 
+
 if(!['Miss','Mrs','Mr'].includes(data.title)){
     return res.status(400).send({status : false, msg : "Should include 'Miss', 'Mr' or 'Mrs only!"})
 }
@@ -41,20 +42,26 @@ if(!['Miss','Mrs','Mr'].includes(data.title)){
 if(!name){
     return res.status(400).send({status:false,msg:"Please provide a name!"})
 }
+data.name = data.name.trim().split(" ").filter(word =>word).join(" ")
+
 if(!phone){
     return res.status(400).send({status:false,msg:"Please provide a phone number!"})
 }
+
 if(!email){
     return res.status(400).send({status:false,msg:"Please provide an email!"})
 }
+
 if(!password){
     return res.status(400).send({status:false,msg:"Please provide a password!"})
 }
+
 const schema = new passValidator();
 schema.is().min(8)
 if (!schema.validate(password)) {
     return res.status(400).send({ status: false, msg: "Minimum length of password should be 8 characters" })
 }
+
 schema.is().max(15)
 if (!schema.validate(password)) {
     return res.status(400).send({ status: false, msg: "Max length of password should be 15 characters" })

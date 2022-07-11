@@ -1,5 +1,6 @@
 const JWT= require("jsonwebtoken")
 const bookModel = require("../models/bookModel")
+const valid = require("../validator/validator.js")
 
 
 const authenticate= async function(req,res,next){
@@ -34,7 +35,8 @@ const authorize= async function(req,res,next){
         if(!token) return res.status(400).send({status: false, msg : "Please provide a token!"})
 
         let decodedToken = JWT.verify(token, "Group-4")
-        if(!decodedToken) return res.status(401).send({status : false, msg : "Invalid token!"})
+        if(!decodedToken) return res.status(400).send({status : false, msg : "Token should be present!"})
+        //if (!valid.jwtValidation(decodedToken)) return res.status(400).send({ status: false, msg: "The token is invalid!!" });
 
         let userLoggedIn = decodedToken.userId
        // console.log(userLoggedIn)

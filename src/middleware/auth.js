@@ -12,7 +12,7 @@ const authenticate= async function(req,res,next){
     let decodedtoken = JWT.verify(token,"Group-4") //authentication
     
      if(!decodedtoken){
-        res.status(400).send({status:false, msg:"invalid token"})
+        res.status(401).send({status:false, msg:"invalid token"})
      }
      next()
     }

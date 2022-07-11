@@ -16,7 +16,7 @@ router.post("/login",  userController.userLogin)
 router.get("/books", bookController.getBooks)
 router.get("/books/:bookId", bookController.getBooksById)
 
-router.get("/books/:bookId", bookController.getBooksById)
+
 
 router.put("/books/:bookId", bookController.updateBooks)
 

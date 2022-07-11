@@ -125,10 +125,10 @@ const getBooksById = async function (req, res) {
       if (!isValidbookID) return res.status(400).send({ status: false, message: "BookId is not valid" });
       
   
-      const book = await bookModel.findOne({_id: bookId, isDeleted: false,}).select({ __v: 0, ISBN: 0 }).lean(); 
+      const book = await bookModel.findOne({_id: bookId, isDeleted: false,}).select({ __v: 0, ISBN: 0 }).lean() 
       if (!book) return res.status(404).send({ status: false, message: "BookId does not exist!" });
     
-    const reviews = await  reviewModel.find({_id:bookId})
+    const reviews = await  reviewModel.find({bookId : bookId, isDeleted : false})
          
             book.reviewsData = reviews
      

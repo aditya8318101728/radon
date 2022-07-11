@@ -1,7 +1,7 @@
-const isValid = function(value) {
-    if(typeof (value) === "undefined" || typeof (value) === null) {return false}
-    if(typeof (value) === "string" && (value).trim().length == 0) {return false}
-    if(typeof (value) === 'number' && (value).toString().trim().length == 0){return false}
+const isValid = function(value) {       //Ask TA
+    if(typeof (value) == "undefined" || typeof (value) === null) {return false}
+    if(typeof (value) == "string" && (value).trim().length == 0) {return false}
+    if(typeof (value) == 'number' && (value).toString().trim().length == 0){return false}
     return true
 }
 

@@ -40,9 +40,8 @@ if(!['Miss','Mrs','Mr'].includes(data.title)){
 
 ////////////////////////////////////////MANDATORY FIELDS////////////////////////////////////////
 
-if(!name){
-    return res.status(400).send({status:false,msg:"Please provide a name!"})
-}
+if(!name) return res.status(400).send({status:false,msg:"Please provide a name!"})
+
 if(typeof name !== "string") return res.status(400).send({status : false, msg : "Data-type should be String only!"})
 if (!valid.reg(name))
 return res.status(400).send({ status: false, msg: "Please use only alphabets in name!" });
@@ -76,10 +75,9 @@ if (!schema.validate(password)) {
 
 ////////////////////////////////////////// email validation /////////////////////////////////////////
 
-let regex1 = /^\w+([\.-]?\w+)*@[a-z]\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-if(!regex1.test(email)){
-    return res.status(400).send({status:false,msg:"The email is invalid!"})
-}
+
+if (!valid.emailRegex(email)) return res.status(400).send({status:false,msg:"The email is invalid!"})
+
 const emailcheck = data.email
 const emailvalidate = await userModel.findOne({email:emailcheck})
 if(emailvalidate){
@@ -88,10 +86,8 @@ return res.status(400).send({status:false,msg:"This email already exists!"})
 
 //////////////////////////////////////MOBILE NUMBER UNIQUE///////////////////////////////////////////
 
-let reg = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/.test(phone);
-if (!reg) {
-return res.status(400).send({ status: false, msg: "Invalid phone number!" });
-}
+if (!valid.phoneRegex(phone)) return res.status(400).send({ status: false, msg: "Invalid phone number!" });
+
 const phoneNumber = data.phone
 const number = await userModel.findOne({phone:phoneNumber})
 if(number){
@@ -118,11 +114,20 @@ return res.status(400).send({status:false,msg:"Phone number already exists!"})
 
   const userLogin = async function(req,res){
     try{
+    const data = req.body
     const email= req.body.email
     const password= req.body.password
+
+    if(Object.keys(data).length == 0) return res.status(400).send({status : false, msg : "Please provide inputs in the body!"})
+    
     if(!email){
-      return res.status(400).send({status:false,message:"Please enter an email!"})
+        return res.status(400).send({status:false,message:"Please enter an email!"})
     }
+    
+    if (email.trim() == "") return res.status(400).send({status:false, msg: "Email can not be empty." })
+    
+    if(password.trim() == "") return res.status(400).send({status:false, msg: "Password can not be empty." })
+
     const user = await userModel.findOne({email:email})
     if(!user){
         return res.status(404).send({status:false,message:"User does not exists!"})
@@ -140,9 +145,9 @@ return res.status(400).send({status:false,msg:"Phone number already exists!"})
             batch : "radon",
             organisation : "Function-Up"
         },
-            "Group-4", {expiresIn :"12h"} 
+            "Group-4", {expiresIn : 1000} 
             )
-    //res.status(200).setHeader("x-api-key",token)
+    
     res.status(200).send({status:true, data:token })
 
 }catch(error){

@@ -50,9 +50,9 @@ const createBook = async function (req, res) {
         if (!isValidDateFormat(releasedAt)) return res.status(400).send({ status: false, msg: "Wrong date format!" })
 
         let bookCreated = await bookModel.create(data)
-        if (!bookCreated) res.status(404).send({ status: false, msg: "Book already exists!" })
+         if (!bookCreated) return res.status(404).send({ status: false, msg: "Book already exists!" })
 
-        res.status(201).send({ status: true, msg: "Book created successfully!", bookCreated })
+     return res.status(201).send({ status: true, msg: "Book created successfully!", bookCreated })
     } catch (error) {
         res.status(500).send({ msg: error.message })
     }

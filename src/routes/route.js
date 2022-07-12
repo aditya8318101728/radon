@@ -3,6 +3,7 @@ const router = express.Router()
 const userController = require("../controllers/userController")
 const bookController = require("../controllers/bookController")
 const MW = require("../middleware/auth.js")
+const rc= require("../controllers/reviewController")
 
 
 
@@ -21,6 +22,7 @@ router.get("/books/:bookId",  bookController.getBooksById)
 router.put("/books/:bookId", MW.authorize, bookController.updateBooks)
 
 router.delete("/books/:bookId", MW.authorize, bookController.deleteBooks)
+router.post("/books/:bookId/review", rc.createReview )
 
 
 

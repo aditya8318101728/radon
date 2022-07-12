@@ -19,6 +19,7 @@ const createUser = async function ( req,res ) {
    if(!street) return res.status(400).send({status:false,msg:"Street is mandatory!"})
    let pincode = address.pincode
    if(!pincode) return res.status(400).send({status:false,msg:"Pincode is mandatory!"})
+   if(typeof pincode !== "string") return res.status(400).send({status : false, msg : "Pincode should be in String!"})
 
 //////////////////////////////BODY SHOULD NOT BE EMPTY////////////////////////////////////////////////
 
@@ -42,6 +43,9 @@ if(!['Miss','Mrs','Mr'].includes(data.title)){
 if(!name){
     return res.status(400).send({status:false,msg:"Please provide a name!"})
 }
+if(typeof name !== "string") return res.status(400).send({status : false, msg : "Data-type should be String only!"})
+if (!valid.reg(name))
+return res.status(400).send({ status: false, msg: "Please use only alphabets in name!" });
 data.name = data.name.trim().split(" ").filter(word =>word).join(" ")
 
 if(!phone){
@@ -93,11 +97,6 @@ const number = await userModel.findOne({phone:phoneNumber})
 if(number){
 return res.status(400).send({status:false,msg:"Phone number already exists!"})
 }
-
-///////////////////////////////////////USE ALPHABETS IN NAME////////////////////////////////////////
-
-if (!valid.reg(name))
-return res.status(400).send({ status: false, msg: "Please use only alphabets in name!" });
 
 /////////////////////////////////////ALL SET CREATE DATA/////////////////////////////////////
 

@@ -7,24 +7,30 @@ const moment = require("moment")
 
 const createReview = async function (req, res) {
     try{
-    let  bookId  = req.params.bookId;
+    let  bookId  = req.params.bookId
     let data = req.body
+    
     let { reviewedBy, rating, review } = data;
+    if(Object.keys(data).length ==0) return res.status(400).send({status :false, msg: "Please provide inputs!"})
    
     let isValidbookID = mongoose.isValidObjectId(bookId); 
-    if (!isValidbookID) return res.status(400).send({ status: false, message: "Book Id is Not Valid" });
+    if (!isValidbookID) return res.status(400).send({ status: false, msg: "Book Id is not valid!" });
     
     let findBook = await bookModel.findOne({bookId: bookId, isDeleted: false,});
-    if (!findBook) return res.status(404).send({status: false,message: "No such Book is Present as Per BookID"});
+    if (!findBook) return res.status(404).send({status: false,message: "No such book found!"});
     
   
-    if (!reviewedBy) return res.status(400).send({status: false, msg: "please enter valid name for reviewer!!!"});
+    if (!reviewedBy) return res.status(400).send({status: false, msg: "Please enter valid name for reviewer!"});
+    data.reviewedBy = data.reviewedBy.trim().split(" ").filter(word =>word).join(" ")
+
+    if(!review) return res.status(400).send({status: false, msg: "Please enter your reviews!"})
+    data.review = data.review.trim().split(" ").filter(word =>word).join(" ")
     
     
-    if (!rating) return res.status(400).send({ status: false, message: "rating is Missing" });
+    if (!rating) return res.status(400).send({ status: false, message: "Rating is missing!" });
   
     if (!(rating >= 1 && rating <= 5))
-      return res.status(400).send({ status: false, message: " Please enter Rating between [1-5]" });
+      return res.status(400).send({ status: false, message: " Please enter rating between 1-5 only." });
   
 
       data.reviewedAt = Date.now()
@@ -34,6 +40,7 @@ const createReview = async function (req, res) {
      
     let reviewData = await reviewModel.create(data)
     let updated = await bookModel.findByIdAndUpdate(bookId, { $inc: { reviews: 1 },})
+
     return res.status(201).send({ status: true, message: "Success", data: updated, reviewData});
 
   }catch(error){
@@ -64,7 +71,6 @@ const updateReview = async function (req, res){
         let rating = req.body.rating
         let reviewedBy = req.body.reviewedBy
 
-        if(rating === String) return res.status(403).send({status : false, msg : "Forbidden data type of ratings!"})
 
         if(![1,2,3,4,5].includes(rating)) return res.status(400).send({status : false, msg : "Ratings should include numbers ranging from 1 to 5 only! "})
 
@@ -97,11 +103,12 @@ const deleteReview = async function (req, res) {
         const reviewId = req.params.reviewId;
 
         let bookIdCheck = await bookModel.findById({ _id: bookId });
-        if (!bookId) return res.status(400).send({ status: false, message: "BookId does not exist" });
+        if (!bookId) return res.status(404).send({ status: false, message: "BookId does not exist" });
 
 
         let reviewIdCheck = await reviewModel.findById({ _id: reviewId });
-        if (!reviewId) return res.status(400).send({ status: false, message: "ReviewId does not exist" })
+        if (!reviewId) return res.status(404).send({ status: false, message: "ReviewId does not exist" })
+        
         if (bookIdCheck.isDeleted == true || reviewIdCheck.isDeleted == true) return res.status(400).send({ status: false, message: "Book or Book review does not exist" })
 
         if (reviewIdCheck.isDeleted == false) {

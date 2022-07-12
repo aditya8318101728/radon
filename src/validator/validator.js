@@ -11,10 +11,8 @@ return /^[A-Z a-z]+$/.test(value)
 
 
 
-// const jwtValidation = function(x){
-//     return /^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/.test(x)
-// }
+
 
 module.exports.isValid = isValid
 module.exports.reg = reg
-//module.exports.jwtValidation = jwtValidation
+

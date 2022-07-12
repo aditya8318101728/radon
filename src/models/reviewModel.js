@@ -22,6 +22,7 @@ const reviewSchema = new mongoose.Schema(
         rating: {
             type: Number,
             required: true,
+            enum : [1, 2, 3, 4, 5]
             
 
         },
@@ -34,7 +35,7 @@ const reviewSchema = new mongoose.Schema(
             default: false
         },
     },
-   
+    
 )
 module.exports = mongoose.model("Review", reviewSchema)
 

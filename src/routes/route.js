@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const userController = require("../controllers/userController")
 const bookController = require("../controllers/bookController")
+const reviewController = require("../controllers/reviewController.js")
 const MW = require("../middleware/auth.js")
 const rc= require("../controllers/reviewController")
 
@@ -24,7 +25,11 @@ router.put("/books/:bookId", MW.authorize, bookController.updateBooks)
 router.delete("/books/:bookId", MW.authorize, bookController.deleteBooks)
 router.post("/books/:bookId/review", rc.createReview )
 
+router.post("/books/:bookId/review", reviewController.createReview)
 
+router.put("/books/:bookId/review/:reviewId", reviewController.updateReview)
+
+router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview)
 
 
 

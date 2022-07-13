@@ -14,7 +14,7 @@ const createBook = async function (req, res) {
         if (!title) return res.status(400).send({ status: false, msg: "Please insert title!" })
         let uniqueTitle = await bookModel.findOne({ title: title })
         if (uniqueTitle) return res.status(409).send({ status: false, msg: "Title already exists!" })
-
+        data.title = data.title.trim().split(" ").filter(word =>word).join(" ")
 
         if (!excerpt) return res.status(400).send({ status: false, msg: "Excerpt should be present!" })
 
@@ -57,6 +57,11 @@ const createBook = async function (req, res) {
         res.status(500).send({ msg: error.message })
     }
 }
+
+
+
+
+
 
 const getBooks = async function (req, res) {
     try {
@@ -101,6 +106,8 @@ const getBooks = async function (req, res) {
 }
 
 
+
+
 //GETTING BOOKS BY ID
 
 const getBooksById = async function (req, res) {
@@ -125,6 +132,9 @@ const getBooksById = async function (req, res) {
         return res.status(500).send({ status: false, message: err.message });
     }
 };
+
+
+
 
 
 const updateBooks = async function (req, res) {

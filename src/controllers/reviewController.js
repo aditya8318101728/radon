@@ -19,9 +19,7 @@ const createReview = async function (req, res) {
     let findBook = await bookModel.findOne({bookId: bookId, isDeleted: false,});
     if (!findBook) return res.status(404).send({status: false,message: "No such book found!"});
     
-  
-    if (!reviewedBy) return res.status(400).send({status: false, msg: "Please enter valid name for reviewer!"});
-    data.reviewedBy = data.reviewedBy.trim().split(" ").filter(word =>word).join(" ")
+    if(reviewedBy) data.reviewedBy = data.reviewedBy.trim().split(" ").filter(word =>word).join(" ")
 
     if(!review) return res.status(400).send({status: false, msg: "Please enter your reviews!"})
     data.review = data.review.trim().split(" ").filter(word =>word).join(" ")
@@ -65,7 +63,12 @@ const createReview = async function (req, res) {
 const updateReview = async function (req, res){
     try{
         let bookId = req.params.bookId
+        let isValidbookID = mongoose.isValidObjectId(bookId); 
+        if (!isValidbookID) return res.status(400).send({ status: false, msg: "Book Id is not valid!" })
+
         let reviewId = req.params.reviewId
+        let isValidReviewID = mongoose.isValidObjectId(reviewId); 
+        if (!isValidReviewID) return res.status(400).send({ status: false, msg: "Review Id is not valid!" });
 
         let review = req.body.review
         let rating = req.body.rating
@@ -100,7 +103,12 @@ const updateReview = async function (req, res){
 const deleteReview = async function (req, res) {
     try {
         const bookId = req.params.bookId;
+        let isValidbookID = mongoose.isValidObjectId(bookId); 
+        if (!isValidbookID) return res.status(400).send({ status: false, msg: "Book Id is not valid!" })
+
         const reviewId = req.params.reviewId;
+        let isValidReviewID = mongoose.isValidObjectId(reviewId); 
+        if (!isValidReviewID) return res.status(400).send({ status: false, msg: "Review Id is not valid!" });
 
         let bookIdCheck = await bookModel.findById({ _id: bookId });
         if (!bookId) return res.status(404).send({ status: false, message: "BookId does not exist" });

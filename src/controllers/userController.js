@@ -6,28 +6,27 @@ const jwt = require("jsonwebtoken")
 const passValidator = require('password-validator');
 
 
+
+
+
+
+
 const createUser = async function ( req,res ) {
   try{
    let data = req.body
    let {title,name,phone,email,password,} = data      //DESTRUCTURE
 
    let address = req.body.address
-   if(!address) return res.status(400).send({status:false,msg:"Address is mandatory!"})
-   let city = address.city
-   if(!city) return res.status(400).send({status:false,msg:"City is mandatory!"})
-   let street = address.street
-   if(!street) return res.status(400).send({status:false,msg:"Street is mandatory!"})
    let pincode = address.pincode
-   if(!pincode) return res.status(400).send({status:false,msg:"Pincode is mandatory!"})
    if(typeof pincode !== "string") return res.status(400).send({status : false, msg : "Pincode should be in String!"})
 
-//////////////////////////////BODY SHOULD NOT BE EMPTY////////////////////////////////////////////////
+
 
    if(Object.keys(data).length==0){
    return res.status(400).send({status : false, msg : "Body should not be empty!"})
    }
    
-/////////////////////////////////////////ENUM WORDS ///////////////////////////////////////////
+
 
 if(!title){
     return res.status(400).send({status:false,msg:"Title is mandatory!"})
@@ -38,9 +37,8 @@ if(!['Miss','Mrs','Mr'].includes(data.title)){
     return res.status(400).send({status : false, msg : "Should include 'Miss', 'Mr' or 'Mrs only!"})
 }
 
-////////////////////////////////////////MANDATORY FIELDS////////////////////////////////////////
 
-if(!name){
+if(!valid.isValid(name)){
     return res.status(400).send({status:false,msg:"Please provide a name!"})
 }
 if(typeof name !== "string") return res.status(400).send({status : false, msg : "Data-type should be String only!"})
@@ -71,10 +69,6 @@ if (!schema.validate(password)) {
     return res.status(400).send({ status: false, msg: "Max length of password should be 15 characters" })
 }
 
-//////////////////////////////////////CONDITION FOR BLANK VALUE//////////////////////////////////////
-
-
-////////////////////////////////////////// email validation /////////////////////////////////////////
 
 let regex1 = /^\w+([\.-]?\w+)@[a-z]\w+([\.-]?\w+)(\.\w{2,3})+$/;
 if(!regex1.test(email)){
@@ -86,7 +80,7 @@ if(emailvalidate){
 return res.status(400).send({status:false,msg:"This email already exists!"})
 }
 
-//////////////////////////////////////MOBILE NUMBER UNIQUE///////////////////////////////////////////
+
 
 let reg = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/.test(phone);
 if (!reg) {
@@ -98,7 +92,7 @@ if(number){
 return res.status(400).send({status:false,msg:"Phone number already exists!"})
 }
 
-/////////////////////////////////////ALL SET CREATE DATA/////////////////////////////////////
+
 
    let savedData = await userModel.create(data);
    res.status(201).send({msg:savedData});
@@ -106,6 +100,10 @@ return res.status(400).send({status:false,msg:"Phone number already exists!"})
    res.status(500).send({ status: false, msg: err.message });
    }
 }
+
+
+
+
 
 
 
@@ -140,7 +138,7 @@ return res.status(400).send({status:false,msg:"Phone number already exists!"})
             batch : "radon",
             organisation : "Function-Up"
         },
-            "Group-4", {expiresIn :"12h"} 
+            "Group-4", {expiresIn : 120} 
             )
     //res.status(200).setHeader("x-api-key",token)
     res.status(200).send({status:true, data:token })

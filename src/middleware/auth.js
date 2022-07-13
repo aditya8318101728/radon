@@ -5,7 +5,9 @@ const valid = require("../validator/validator.js")
 
 const authenticate= async function(req,res,next){
     try{
+        
     const token= req.headers["x-api-key"]
+    
     
     if(!token){
         res.status(400).send({status:false,msg:"Please enter token"})
@@ -13,7 +15,7 @@ const authenticate= async function(req,res,next){
     let decodedtoken = JWT.verify(token,"Group-4") //authentication
     
      if(!decodedtoken){
-        res.status(400).send({status:false, msg:"invalid token"})
+       return  res.status(401).send({status:false, msg:"invalid token"})
      }
      next()
     }

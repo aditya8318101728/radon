@@ -25,11 +25,11 @@ router.put("/books/:bookId", MW.authorize, bookController.updateBooks)
 router.delete("/books/:bookId", MW.authorize, bookController.deleteBooks)
 router.post("/books/:bookId/review", rc.createReview )
 
-router.post("/books/:bookId/review", MW.authenticate, reviewController.createReview)
+router.post("/books/:bookId/review", reviewController.createReview)
 
-router.put("/books/:bookId/review/:reviewId", MW.authorize, reviewController.updateReview)
+router.put("/books/:bookId/review/:reviewId", reviewController.updateReview)
 
-router.delete("/books/:bookId/review/:reviewId", MW.authorize, reviewController.deleteReview)
+router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview)
 
 
 

@@ -36,16 +36,13 @@ const authorize= async function(req,res,next){
 
         let decodedToken = JWT.verify(token, "Group-4")
         if(!decodedToken) return res.status(400).send({status : false, msg : "Token should be present!"})
-        //if (!valid.jwtValidation(decodedToken)) return res.status(400).send({ status: false, msg: "The token is invalid!!" });
 
         let userLoggedIn = decodedToken.userId
-       // console.log(userLoggedIn)
 
         let findUserId = await bookModel.findById(bookId)
         if(!findUserId) return res.status(404).send({status : false, msg : "No book found with this bookId"})
 
         let newUserId = findUserId.userId.toString()
-        //console.log(newUserId)
 
 
         if(userLoggedIn !== newUserId) return res.status(401).send({status : false, msg : "You're not authorized!"})

@@ -9,13 +9,12 @@ const MW = require("../middleware/auth.js")
 
 
 
-
 router.post('/register', userController.createUser)
 
 router.post("/books", MW.authenticate, bookController.createBook)
 
 router.post("/login",  userController.userLogin)
-
+ 
 router.get("/books", MW.authenticate, bookController.getBooks)
 
 router.get("/books/:bookId", MW.authenticate, bookController.getBooksById)

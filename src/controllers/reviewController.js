@@ -8,7 +8,7 @@ const moment = require("moment")
 const createReview = async function (req, res) {
     try{
     let  bookId  = req.params.bookId
-    let data = req.body
+    let data = req.body 
     
     let { reviewedBy, rating, review } = data;
     if(Object.keys(data).length ==0) return res.status(400).send({status :false, msg: "Please provide inputs!"})

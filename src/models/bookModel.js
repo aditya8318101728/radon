@@ -11,7 +11,7 @@ const bookSchema = new mongoose.Schema({
     excerpt: {
         type: String,
         required: true
-    },
+    }, 
 
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -52,7 +52,10 @@ const bookSchema = new mongoose.Schema({
     releasedAt: {
         type:Date,
         required: true,
-    }
+    },
+    BookCover:{
+        type:String
+    },
 
 }, { timestamps: true })
 

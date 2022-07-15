@@ -3,23 +3,68 @@ const mongoose = require("mongoose")
 const moment = require("moment")
 const userModel = require("../models/userModel")
 const reviewModel = require("../models/reviewModel")
+const aws = require("aws-sdk")
+const multer = require("multer")
+
+aws.config.update({
+    accessKeyId: "AKIAY3L35MCRVFM24Q7U",
+    secretAccessKey: "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",
+    region: "ap-south-1"
+})
+
+let uploadFile = async (file) => {
+    return new Promise(function (resolve, reject) {
+        // this function will upload file to aws and return the link
+        let s3 = new aws.S3({ apiVersion: '2006-03-01' }); // we will be using the s3 service of aws
+    
+    var uploadParams = {
+        ACL: "public-read",
+        Bucket: "classroom-training-bucket",  //HERE
+        Key: "abc/" + file.originalname, //HERE 
+        Body: file.buffer
+    }
+
+
+    s3.upload(uploadParams, function (err, data) {
+        if (err) {
+            return reject({ "error": err })
+        }
+        console.log(data)
+        console.log("file uploaded succesfully")
+        return resolve(data.Location)
+    })
+})}
 
 const createBook = async function (req, res) {
     try {
         let data = req.body
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, msg: "Please input data!" })
 
+        let files= req.files
+        if(files && files.length>0){
+            //upload to s3 and get the uploaded link
+            // res.send the link back to frontend/postman
+            let uploadedFileURL= await uploadFile( files[0] )
+            res.status(201).send({msg: "file uploaded succesfully", data: uploadedFileURL})
+        }
+        else{
+            res.status(400).send({ msg: "No file found" })
+        }
+        
         let { title, excerpt, userId, ISBN, category, subcategory, releasedAt } = data
 
         if (!title) return res.status(400).send({ status: false, msg: "Please insert title!" })
         let uniqueTitle = await bookModel.findOne({ title: title })
         if (uniqueTitle) return res.status(409).send({ status: false, msg: "Title already exists!" })
-        data.title = data.title.trim().split(" ").filter(word =>word).join(" ")
+        data.title = data.title.trim().split(" ").filter(word => word).join(" ")
 
         if (!excerpt) return res.status(400).send({ status: false, msg: "Excerpt should be present!" })
 
 
         if (!userId) return res.status(400).send({ status: false, msg: "UserId should be present!" })
+        let chkUserId = await userModel.findOne({ _id: userId })
+        if (!chkUserId) return res.status(409).send({ status: false, msg: "UserId doesn't exist in the Database!" })
+
         let isValidId = mongoose.Types.ObjectId.isValid(userId)
         if (!isValidId) return res.status(400).send({ status: false, msg: "The userId provided is invalid!" })
 
@@ -50,7 +95,6 @@ const createBook = async function (req, res) {
         if (!isValidDateFormat(releasedAt)) return res.status(400).send({ status: false, msg: "Wrong date format!" })
 
         let bookCreated = await bookModel.create(data)
-        if (!bookCreated) res.status(404).send({ status: false, msg: "Book already exists!" })
 
         res.status(201).send({ status: true, msg: "Book created successfully!", bookCreated })
     } catch (error) {
@@ -71,7 +115,7 @@ const getBooks = async function (req, res) {
 
         if (!query) {
             let allBook = await bookModel.find({ isDeleted: false }).sort("title")
-            if (allBook.length == 0) return res.status(404).send({ status: false, message: "Book Not Found" })
+            if (allBook.length == 0) return res.status(404).send({ status: false, message: "Book/s Not Found" })
             return res.status(200).send({ status: true, message: "Books List", data: allBook })
         }
 
@@ -79,7 +123,7 @@ const getBooks = async function (req, res) {
             let id = query.userId
             let isValidId = mongoose.Types.ObjectId.isValid(id)
             if (!isValidId) return res.status(400).send({ status: false, msg: "The userId provided is invalid!" })
-            let user = await userModel.findById(id)
+            let user = await userModel.findById({ _id: id })
             if (!user) { return res.status(404).send({ status: false, msg: "No book of such user" }) }
         }
 
@@ -113,20 +157,20 @@ const getBooks = async function (req, res) {
 const getBooksById = async function (req, res) {
     try {
         let bookId = req.params.bookId;
-       
-      let isValidbookID = mongoose.isValidObjectId(bookId);
-      if (!isValidbookID) return res.status(400).send({ status: false, message: "BookId is not valid" });
-      
-  
-      const book = await bookModel.findOne({_id: bookId, isDeleted: false,}).select({ __v: 0, ISBN: 0 }).lean() 
-      if (!book) return res.status(404).send({ status: false, message: "BookId does not exist!" });
-    
-    const reviews = await  reviewModel.find({bookId : bookId, isDeleted : false})
-         
-            book.reviewsData = reviews
-     
-    
-   return res.status(200).send({ status: true, message: "Successfully fetched books!", data: book });
+
+        let isValidbookID = mongoose.isValidObjectId(bookId);
+        if (!isValidbookID) return res.status(400).send({ status: false, message: "BookId is not valid" });
+
+
+        const book = await bookModel.findOne({ _id: bookId, isDeleted: false, }).select({ __v: 0, ISBN: 0 }).lean()
+        if (!book) return res.status(404).send({ status: false, message: "BookId does not exist!" });
+
+        const reviews = await reviewModel.find({ bookId: bookId, isDeleted: false })
+
+        book.reviewsData = reviews
+
+
+        return res.status(200).send({ status: true, message: "Successfully fetched books!", data: book });
 
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message });
@@ -144,7 +188,6 @@ const updateBooks = async function (req, res) {
         if (!isValidId) return res.status(400).send({ status: false, msg: "The bookId provided is invalid!" })
 
         let book = await bookModel.findOne({ _id: bookId, isDeleted: false })
-
         if (!book) {
             return res.status(404).send({ status: false, message: "No books found with this bookId." })
         }
@@ -168,6 +211,11 @@ const updateBooks = async function (req, res) {
             let ISBNpresent = await bookModel.find({ ISBN: ISBN, isDeleted: false })
             if (ISBNpresent.length !== 0) {
                 return res.status(400).send({ status: false, message: "The ISBN is already taken!" })
+            }
+            let isbnRegex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/
+            if (!isbnRegex.test(ISBN)) {
+                return res.status(400).send({ status: false, msg: "Please provide a valid ISBN!" })
+
             }
             book.ISBN = ISBN;
         }
@@ -210,7 +258,7 @@ const deleteBooks = async function (req, res) {
     } catch (error) {
         res.status(500).send({ msg: error.message })
     }
-    
+
 }
 
 module.exports.createBook = createBook

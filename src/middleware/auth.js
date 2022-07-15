@@ -11,7 +11,7 @@ const authenticate= async function(req,res,next){
     const user = data.userId
     
     if(!token){
-        res.status(400).send({status:false,msg:"Please enter token"})
+        res.status(400).send({status:false,msg:"Please enter token"}) 
     }
     let decodedtoken = JWT.verify(token,"Group-4") //authentication
 

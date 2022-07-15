@@ -1,4 +1,3 @@
-
 const userModel = require("../models/userModel")
 let validator = require("validator");
 const valid = require("../validator/validator")
@@ -7,18 +6,14 @@ const passValidator = require('password-validator');
 
 
 
-
-
-
-
 const createUser = async function ( req,res ) {
   try{
    let data = req.body
-   let {title,name,phone,email,password,} = data      //DESTRUCTURE
+   let {title,name,phone,email,password} = data      //DESTRUCTURE
 
-   let address = req.body.address
-   let pincode = address.pincode
-   if(typeof pincode !== "string") return res.status(400).send({status : false, msg : "Pincode should be in String!"})
+//    let address = req.body.address 
+//    let pincode = address.pincode
+//    if(typeof pincode !== "string") return res.status(400).send({status : false, msg : "Pincode should be in String!"})
 
 
 
@@ -138,7 +133,7 @@ return res.status(400).send({status:false,msg:"Phone number already exists!"})
             batch : "radon",
             organisation : "Function-Up"
         },
-            "Group-4", {expiresIn : 120} 
+            "Group-4", {expiresIn : "12h"} 
             )
     //res.status(200).setHeader("x-api-key",token)
     res.status(200).send({status:true, data:token })

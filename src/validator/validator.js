@@ -10,7 +10,7 @@ return /^[A-Z a-z]+$/.test(value)
 }
 
 
-
+ 
 
 
 module.exports.isValid = isValid

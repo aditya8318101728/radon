@@ -12,7 +12,7 @@ router.get("/test-me", function (req, res) {
 // step4: Setupconfig for aws authenticcation- use code below as plugin keys that are given to you
 //  step5: build the uploadFile funciton for uploading file- use code below and edit what is marked HERE only
 
-
+ 
 //PROMISES:-
 // -you can never use await on callback..if you awaited something , then you can be sure it is within a promise
 // -how to write promise:- wrap your entire code inside: "return new Promise( function(resolve, reject) { "...and when error - return reject( err )..else when all ok and you have data, return resolve (data)
